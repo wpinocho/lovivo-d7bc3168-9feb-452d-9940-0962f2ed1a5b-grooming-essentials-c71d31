@@ -1,96 +1,73 @@
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
-import { ProductCard } from '@/components/ProductCard';
-import { CollectionCard } from '@/components/CollectionCard';
-import { FloatingCart } from '@/components/FloatingCart';
-import { NewsletterSection } from '@/components/NewsletterSection';
-import { EcommerceTemplate } from '@/templates/EcommerceTemplate';
-import type { UseIndexLogicReturn } from '@/components/headless/HeadlessIndex';
-
-/**
- * EDITABLE UI - IndexUI
- * 
- * Interfaz completamente editable para la página principal.
- * El agente IA puede modificar colores, textos, layout, etc.
- */
+import { ProductCard } from '@/components/ProductCard'
+import { FloatingCart } from '@/components/FloatingCart'
+import { NewsletterSection } from '@/components/NewsletterSection'
+import { EcommerceTemplate } from '@/templates/EcommerceTemplate'
+import { HeroSection } from '@/components/HeroSection'
+import { ThreeStepRoutine } from '@/components/ThreeStepRoutine'
+import { CategoryShowcase } from '@/components/CategoryShowcase'
+import { IngredientsFAQ } from '@/components/IngredientsFAQ'
+import { BuildRoutineCTA } from '@/components/BuildRoutineCTA'
+import type { UseIndexLogicReturn } from '@/components/headless/HeadlessIndex'
 
 interface IndexUIProps {
-  logic: UseIndexLogicReturn;
+  logic: UseIndexLogicReturn
 }
 
 export const IndexUI = ({ logic }: IndexUIProps) => {
   const {
     collections,
     loading,
-    loadingCollections,
     selectedCollectionId,
     filteredProducts,
     handleViewCollectionProducts,
     handleShowAllProducts,
-  } = logic;
+  } = logic
 
   return (
-    <EcommerceTemplate 
-      showCart={true}
-    >
+    <EcommerceTemplate showCart={true}>
       {/* Hero Section */}
-      <section className="bg-background py-12 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            Discover Our Products
-          </h1>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Find the best products at the best price. Guaranteed quality and fast shipping.
-          </p>
-        </div>
-      </section>
+      <HeroSection />
 
-      {/* Collections Section */}
-      {!loadingCollections && collections.length > 0 && (
-        <section className="py-12 bg-muted/30">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-foreground mb-8">
-              Our Collections
-            </h2>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {collections.map((collection) => (
-                <CollectionCard 
-                  key={collection.id} 
-                  collection={collection} 
-                  onViewProducts={handleViewCollectionProducts} 
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {/* 3-Step Routine */}
+      <ThreeStepRoutine />
 
-      {/* Products Section */}
-      <section className="py-12">
+      {/* Category Showcase */}
+      <CategoryShowcase 
+        onViewCategory={handleViewCollectionProducts}
+      />
+
+      {/* Featured Products Section */}
+      <section className="py-20 bg-background" id="products">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-foreground">
-              {selectedCollectionId 
-                ? `Products from ${collections.find(c => c.id === selectedCollectionId)?.name || 'Collection'}` 
-                : 'Featured Products'
-              }
-            </h2>
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h2 className="text-4xl font-bold text-foreground mb-2">
+                {selectedCollectionId 
+                  ? collections.find(c => c.id === selectedCollectionId)?.name || 'Products'
+                  : 'Featured Products'
+                }
+              </h2>
+              <p className="text-muted-foreground">
+                {selectedCollectionId
+                  ? collections.find(c => c.id === selectedCollectionId)?.description
+                  : 'Discover our premium grooming essentials'
+                }
+              </p>
+            </div>
             {selectedCollectionId && (
-              <Button 
-                variant="outline" 
+              <button
                 onClick={handleShowAllProducts}
+                className="text-primary hover:text-accent font-semibold transition-colors"
               >
-                See All Products
-              </Button>
+                View All Products →
+              </button>
             )}
           </div>
           
           {loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="bg-muted rounded-lg h-80 animate-pulse"></div>
+                <div key={i} className="bg-muted rounded-lg h-96 animate-pulse"></div>
               ))}
             </div>
           ) : filteredProducts.length > 0 ? (
@@ -100,19 +77,25 @@ export const IndexUI = ({ logic }: IndexUIProps) => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                No products available.
+            <div className="text-center py-16">
+              <p className="text-muted-foreground text-lg">
+                No products available in this collection.
               </p>
             </div>
           )}
         </div>
       </section>
 
+      {/* Ingredients FAQ */}
+      <IngredientsFAQ />
+
+      {/* Build Routine CTA */}
+      <BuildRoutineCTA />
+
       {/* Newsletter Section */}
       <NewsletterSection />
 
       <FloatingCart />
     </EcommerceTemplate>
-  );
-};
+  )
+}
